@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset=utf-8 />
+  <title>Lab 03 Challenge</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <link rel='icon' href='https://newmapsplus.github.io/favicon.ico' type='image/x-icon' />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css" rel="stylesheet" />
+  <link href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,300i,400,900i" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Tauri&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Atma&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 100%;
+    }
+
+    header,
+    section,
+    footer {
+      width: 80%;
+      margin: 10px auto;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      font-weight: 900;
+      font-family: 'Atma', sans-serif;
+      letter-spacing: .04em;
+    }
+
+    h2 {
+      font-size: 2em;
+      font-weight: 300;
+      font-family: 'Atma', sans-serif;
+      letter-spacing: .04em;
+    }
+
+    p {
+      font-size: 1.1em;
+      font-family: 'Tauri', sans-serif;
+      line-height: 1.5em;
+    }
+
+    a {
+      color: #AB0003;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    ul {
+      padding-left: 20px;
+      font-family: 'Tauri', sans-serif;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    hr {
+      margin: 20px 0;
+      border: 0;
+      height: 1px;
+      background: #d3d3d3;
+    }
+
+    .caption {
+      margin: 0 0 20px 0;
+      display: block;
+    }
+
+    #map {
+      width: 100%;
+      height: 540px;
+      margin: 10px auto;
+      border: 2px solid #d3d3d3;
+    }
+
+    .highlight {
+      color: #f05716;
+      font-weight: bold;
+    }
+
+    .img-fill {
+      width: 100%;
+      height: auto;
+      margin: 10px 0;
+    }
+
+    .first-column {
+      float: left;
+      width: 49%;
+      padding-right: 2%;
+    }
+
+    .second-column {
+      float: left;
+      width: 49%;
+    }
+
+    .row::after {
+      content: "";
+      display: block;
+      clear: both;
+    }
+
+    @media screen and (max-width: 900px) {
+
+      .first-column,
+      .second-column {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Satellite Camera Locations</h1>>
+  </header>
+  <section>
+    <div id='map'></div>
+    <div class="row">
+      <div class="first-column">
+        <h2>Camera Information</h2>
+        <p>This map shows the locations of satellite cameras in Kentucky and Tennessee. Popups for the marker display
+          elevation, direction, and an image. This was made for the Lab 3 challenge.
+        </p>
+        <ul>
+          <li><a href="https://github.com/heltond">My profile on GitHub</a></li>
+          <li>Student with <a href="https://newmapsplus.as.uky.edu/">New Maps Plus</a> at the University of Kentucky
+          </li>
+        </ul>
+      </div>
+      <div class="second-column">
+        <img src="https://phenocam.sr.unh.edu/data/latest/thumbs/mammothcave.thumb.jpg" alt="Satellite" class="img-fill">
+      </div>
+      <div class="caption">
+        Mammoth Cave, <a href="https://phenocam.sr.unh.edu/data/latest/thumbs/mammothcave.thumb.jpg">UNH
+        </a>.
+      </div>
+    </div>
+
+  </section>
+  <footer>
+    <hr>
+    <a href="https://newmapsplus.github.io">
+      <img src="https://newmapsplus.github.io/assets/graphics/logo-2018-nmp-75px-h-gray.png"
+        alt="University of Kentucky New Maps Plus">
+    </a>
+
+    <a href="https://uky-gis.github.io">
+      <img src="https://newmapsplus.github.io/assets/graphics/logo-2018-geography-75px-h.png"
+        alt="University of Kentucky Department of Geography">
+    </a>
+  </footer>
+
+  <script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+
+  <script>
+    // initial map options
+    var options = {
+      center: [36.9325, -84.0994],
+      zoom: 7
+    }
+
+    // instantiate Leaflet map object
+    var map = L.map('map', options);
+
+    // Get basemap URL from Leaflet Providers
+    var basemap_url = 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}'
+
+    // Get basemap attributes from Leaflet Providers
+    var basemap_attributes = {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+    }
+
+    // Add tileset as a layer in our map. 
+    var tiles = L.tileLayer(basemap_url, basemap_attributes);
+
+    // add tiles to map
+    map.addLayer(tiles);
+
+    // variable to hold string value of city name
+    // var cityName = "Denver";
+
+    // variable to hold number value of city population
+    // var cityPopulation = 649495;
+
+    // build a string with HTML tags and content
+    // var popup = `<b>${cityName}</b><br><b>population</b>: ${cityPopulation}`;
+
+    // create a Leaflet marker at the coordinates of Denver, CO
+    // add it to the map
+    // and bind the popup content to the marker.
+    // L.marker([39.74, -104.99]).addTo(map)
+    // .bindPopup(popup);
+
+    //var cities = ["Seattle", "Spokane", "Olympia"];
+
+    // var cityCoords = [
+    //   [47.6062, -122.3321],
+    //   [47.6588, -117.4260],
+    //   [47.0379, -122.9007]
+    // ];
+
+    // var cityPops = [744955, 217108, 51609];
+
+    //  var cityCapital = [false, false, true];
+
+    //  for (var i = 0; i < cities.length; i++) {
+    //    var cityPopup = `<b>${cities[i]}</b><br> 
+    //                    <b>Population</b>: ${cityPops[i]}<br>
+    //                    It is ${cityCapital[i]} that this city is the capital.`
+    //    L.marker(cityCoords[i]).addTo(map)
+    //      .bindPopup(cityPopup)
+    //      .bindPopup(cityPopup)
+    //       .bindTooltip(cityPopup);
+    //  };
+
+    var camName = ["Look Rock",
+      "Purchase Knob",
+      "Cold Mountain",
+      "New Found Gap",
+      "Joyce Kilmer",
+      "Clingmans Dome",
+      "Mammoth Cave",
+      "Jackson",
+      "Robinson Forest"],
+      camActive = [true, true, true, true, true, true, true, true, true],
+      camCoords = [[35.633424, -83.941254],
+      [35.585966, -83.072944],
+      [35.393713, -82.774422],
+      [35.611073, -83.424583],
+      [35.257497, -83.795160],
+      [35.562709, -83.498421],
+      [37.192755, -86.102055],
+      [37.592006, -83.316127],
+      [37.467008, -83.157612]],
+      camURL = ["https://www.outragegis.com/weather/img/LookRock-400.jpg",
+        "https://www.outragegis.com/weather/img/PurchaseKnob-400.jpg",
+        "https://www.outragegis.com/weather/img/ColdMountain-400.jpg",
+        "https://www.outragegis.com/weather/img/NewGap-400.jpg",
+        "https://www.outragegis.com/weather/img/JoyceKilmer-400.jpg",
+        "https://phenocam.sr.unh.edu/data/latest/thumbs/smokydome.thumb.jpg",
+        "https://phenocam.sr.unh.edu/data/latest/thumbs/mammothcave.thumb.jpg",
+        "https://www.outragegis.com/weather/img/DBoone-400.jpg",
+        "https://phenocam.sr.unh.edu/data/latest/thumbs/robinson2.thumb.jpg"],
+      camHiRes = ["https://www.outragegis.com/weather/img/LookRock.jpg",
+        "https://www.outragegis.com/weather/img/PurchaseKnob.jpg",
+        "https://www.outragegis.com/weather/img/ColdMountain.jpg",
+        "https://www.outragegis.com/weather/img/NewGap.jpg",
+        "http://www.outragegis.com/weather/img/JoyceKilmer.html",
+        "https://phenocam.sr.unh.edu/data/latest/smokydome.jpg",
+        "https://www.outragegis.com/weather/img/MaCa.jpg",
+        "https://www.outragegis.com/weather/img/DBoone-Lg.jpg",
+        "https://phenocam.sr.unh.edu/data/latest/robinson2.jpg"]
+    camInfo = ["East", "East", "West", "Southeast", "West", "North", "North", "South", "West"],
+      camElev = [2628, 5085, 4922, 5046, 4801, 6644, 741, 1400, 1585];
+
+
+    for (var i = 0; i < camName.length; i++) {
+      var camPopup = `<b>${camName[i]}</b><br> 
+                      <b>Direction</b>: ${camInfo[i]}<br>
+                      <b>Elevation</b>: ${camElev[i]} feet<br>`
+      if (camActive[i] = true) {
+        camPopup += "<img src =" + camURL[i] + ">"
+      }
+      L.marker(camCoords[i]).addTo(map)
+        .bindPopup(camPopup)
+        .bindPopup(camPopup)
+        .bindTooltip(camPopup);
+    };
+
+  </script>
+
+</body>
